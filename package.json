@@ -2,11 +2,45 @@
   "name": "clorio-browser-extension",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
   "private": true,
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "@crxjs/vite-plugin": "^2.0.0",
+    "@testing-library/react": "^16.1.0",
+    "@types/bun": "latest",
+    "@types/chrome": "^0.1.32",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "@types/uuid": "^11.0.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^9.16.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "globals": "^16.5.0",
+    "prettier": "^3.4.0",
+    "typescript-eslint": "^8.50.1",
+    "vite": "^6.0.0",
+    "vitest": "^2.1.0"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@scure/bip32": "^1.6.0",
+    "@scure/bip39": "^1.5.0",
+    "bignumber.js": "^9.1.0",
+    "mina-signer": "^3.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.2",
+    "zod": "^3.25.76",
+    "zustand": "^5.0.2"
   }
 }
