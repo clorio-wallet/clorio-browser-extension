@@ -3,13 +3,15 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/bun": "latest",
+    "tailwindcss": "^4.0.0"
   },
   "peerDependencies": {
     "@crxjs/vite-plugin": "^2.0.0",
@@ -21,7 +23,6 @@
     "@types/uuid": "^11.0.0",
     "@typescript-eslint/parser": "^8.18.0",
     "@vitejs/plugin-react": "^5.1.2",
-    "autoprefixer": "^10.4.0",
     "eslint": "^9.16.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
@@ -35,6 +36,8 @@
     "@hookform/resolvers": "^5.2.2",
     "@scure/bip32": "^1.6.0",
     "@scure/bip39": "^1.5.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
     "bignumber.js": "^9.1.0",
     "mina-signer": "^3.1.0",
     "react": "^19.0.0",
