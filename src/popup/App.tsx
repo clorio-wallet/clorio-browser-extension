@@ -1,20 +1,11 @@
 import React from 'react';
-import {
-  HashRouter,
-  Routes,
-  Route,
-  Outlet,
-  useNavigate,
-} from 'react-router-dom';
+import { HashRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useSidePanelMode } from '@/hooks/use-side-panel-mode';
-import { Button } from '@/components/ui';
 import PlaygroundPage from './Playground';
-import { ModeSelector } from '@/components/ui/mode-selector';
 
 const Layout = () => {
-  const { uiMode, updateMode } = useSidePanelMode();
-  const navigate = useNavigate();
+  const { uiMode } = useSidePanelMode();
 
   return (
     <div
@@ -26,12 +17,6 @@ const Layout = () => {
       )}
     >
       <main className="flex-1 overflow-auto relative px-4">
-        <div className="absolute top-4 right-4 z-50 flex flex-row">
-          <Button variant="ghost" onClick={() => navigate('/playground')}>
-            Playground
-          </Button>
-          <ModeSelector mode={uiMode} onChange={updateMode} />
-        </div>
         <Outlet />
       </main>
     </div>
