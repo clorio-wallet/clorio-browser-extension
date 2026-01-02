@@ -9,6 +9,36 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { BottomSheet, BottomSheetTrigger, BottomSheetContent, BottomSheetHeader, BottomSheetTitle, BottomSheetDescription, BottomSheetFooter, BottomSheetClose } from '@/components/ui/bottom-sheet';
 import { useTheme, Palette } from '@/components/theme-provider';
 import { Moon, Sun, Monitor } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
+import { Separator } from "@/components/ui/separator";
 
 const PlaygroundPage: React.FC = () => {
   const [uiMode, setUiMode] = useState<'popup' | 'sidepanel'>('sidepanel');
@@ -200,7 +230,7 @@ const PlaygroundPage: React.FC = () => {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold">Overlays</h2>
           <Card>
-            <CardContent className="pt-6 flex gap-4">
+            <CardContent className="pt-6 flex flex-wrap gap-4">
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline">Open Dialog</Button>
@@ -251,6 +281,109 @@ const PlaygroundPage: React.FC = () => {
                   </BottomSheetFooter>
                 </BottomSheetContent>
               </BottomSheet>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline">Show Alert Dialog</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Form Elements Section */}
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold">Form Elements & Selection</h2>
+          <Card>
+            <CardContent className="pt-6 space-y-6">
+              <div className="flex items-center space-x-4">
+                <Label>Switch</Label>
+                <Switch />
+              </div>
+              
+              <Separator />
+
+              <div className="flex flex-col space-y-2 max-w-xs">
+                <Label>Select</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a fruit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="apple">Apple</SelectItem>
+                      <SelectItem value="banana">Banana</SelectItem>
+                      <SelectItem value="blueberry">Blueberry</SelectItem>
+                      <SelectItem value="grapes">Grapes</SelectItem>
+                      <SelectItem value="pineapple">Pineapple</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Feedback & Loading Section */}
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold">Feedback & Loading</h2>
+          <Card>
+            <CardContent className="pt-6 space-y-6">
+              <div className="flex flex-wrap gap-4 items-center">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline">Hover me</Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Add to library</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <div className="flex gap-2">
+                  <Badge>Default</Badge>
+                  <Badge variant="secondary">Secondary</Badge>
+                  <Badge variant="outline">Outline</Badge>
+                  <Badge variant="destructive">Destructive</Badge>
+                  <Badge variant="success">Success</Badge>
+                  <Badge variant="warning">Warning</Badge>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <Label>Spinners:</Label>
+                  <Spinner size="sm" />
+                  <Spinner size="md" />
+                  <Spinner size="lg" />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Skeleton:</Label>
+                  <div className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-[250px]" />
+                      <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </section>
