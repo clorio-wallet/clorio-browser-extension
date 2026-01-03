@@ -39,9 +39,19 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Separator } from "@/components/ui/separator";
+import {
+  AddressDisplay,
+  BalanceDisplay,
+  HoldToConfirmButton,
+  PasswordInput,
+  NetworkBadge,
+  TransactionConfirmDialog,
+  SeedPhraseDisplay,
+} from "@/components/wallet";
 
 const PlaygroundPage: React.FC = () => {
   const [uiMode, setUiMode] = useState<'popup' | 'sidepanel'>('sidepanel');
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { theme, setTheme, palette, setPalette } = useTheme();
 
   useEffect(() => {
@@ -384,6 +394,99 @@ const PlaygroundPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </section>
+        {/* Wallet Components Section */}
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold">Wallet Components</h2>
+          <Card>
+            <CardContent className="pt-6 space-y-6">
+              <div className="space-y-2">
+                <Label>Address Display</Label>
+                <div className="flex flex-col gap-2">
+                  <AddressDisplay address="0x71C7656EC7ab88b098defB751B7401B5f6d8976F" />
+                  <AddressDisplay address="0x71C7656EC7ab88b098defB751B7401B5f6d8976F" truncate={false} />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Balance Display</Label>
+                <div className="flex items-end gap-4">
+                  <BalanceDisplay balance={123.4567} symbol="ETH" showFiat fiatValue={246800.50} />
+                  <BalanceDisplay balance={123.4567} symbol="ETH" size="lg" />
+                  <BalanceDisplay balance={0} symbol="ETH" loading />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Network Badges</Label>
+                <div className="flex gap-2">
+                  <NetworkBadge network="mainnet" />
+                  <NetworkBadge network="testnet" />
+                  <NetworkBadge network="devnet" />
+                  <NetworkBadge network="local" />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Hold To Confirm</Label>
+                <div className="flex gap-2">
+                  <HoldToConfirmButton onConfirm={() => alert("Confirmed!")}>
+                    Hold to Confirm
+                  </HoldToConfirmButton>
+                  <HoldToConfirmButton onConfirm={() => alert("Deleted!")} variant="destructive">
+                    Hold to Delete
+                  </HoldToConfirmButton>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Transaction Dialog</Label>
+                <div>
+                  <Button onClick={() => setShowConfirmDialog(true)}>Open Transaction Dialog</Button>
+                  <TransactionConfirmDialog
+                    open={showConfirmDialog}
+                    onOpenChange={setShowConfirmDialog}
+                    onConfirm={() => {
+                      alert("Transaction Sent!");
+                      setShowConfirmDialog(false);
+                    }}
+                    transaction={{
+                      to: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+                      amount: "1.5",
+                      symbol: "ETH",
+                      fee: "0.002",
+                      network: "mainnet",
+                    }}
+                    origin="https://app.uniswap.org"
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Password Input</Label>
+                <div className="max-w-sm">
+                  <PasswordInput showStrength label="New Password" placeholder="Enter password" />
+                </div>
+              </div>
+
+               <Separator />
+               
+               <div className="space-y-2">
+                 <Label>Seed Phrase Display</Label>
+                 <SeedPhraseDisplay words={["witch", "collapse", "practice", "feed", "shame", "open", "despair", "creek", "road", "again", "ice", "least"]} />
+               </div>
             </CardContent>
           </Card>
         </section>
