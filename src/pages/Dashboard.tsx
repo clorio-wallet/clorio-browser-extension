@@ -25,7 +25,7 @@ const DashboardPage: React.FC = () => {
         <CardContent>
           <BalanceDisplay 
             balance={12.45} 
-            symbol="ETH" 
+            symbol="MINA" 
             showFiat 
             fiatValue={24500.12} 
             size="lg"
@@ -41,7 +41,7 @@ const DashboardPage: React.FC = () => {
               address="0x71C7656EC7ab88b098defB751B7401B5f6d8976F" 
               showCopy 
               showExplorer
-              explorerUrl="https://etherscan.io"
+              explorerUrl="https://minascan.io"
             />
           </CardContent>
         </Card>

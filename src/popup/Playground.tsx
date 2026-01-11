@@ -71,7 +71,46 @@ import {
   NetworkBadge,
   TransactionConfirmDialog,
   SeedPhraseDisplay,
+  AccountCard,
+  AssetCard,
+  ValidatorCard,
+  ValidatorList,
+  TransactionList,
+  SendForm,
+  StakeForm,
 } from '@/components/wallet';
+import { AnimatedNumber } from '@/components/ui';
+
+const mockValidators = [
+  {
+    address: 'B62qpt...',
+    name: 'MinaExplorer',
+    stake: 50000000,
+    fee: 5,
+    delegators: 1200,
+    isDelegated: true,
+  },
+  {
+    address: 'B62qr...',
+    name: 'Auro Wallet',
+    stake: 30000000,
+    fee: 5,
+    delegators: 800,
+  },
+  {
+    address: 'B62qs...',
+    name: 'Clorio',
+    stake: 25000000,
+    fee: 2,
+    delegators: 500,
+  },
+  {
+    address: 'B62qt...',
+    stake: 15000000,
+    fee: 1,
+    delegators: 100,
+  },
+];
 
 const PlaygroundPage: React.FC = () => {
   const [uiMode, setUiMode] = useState<'popup' | 'sidepanel'>('sidepanel');
@@ -491,12 +530,12 @@ const PlaygroundPage: React.FC = () => {
                 <div className="flex items-end gap-4">
                   <BalanceDisplay
                     balance={123.4567}
-                    symbol="ETH"
+                    symbol="MINA"
                     showFiat
                     fiatValue={246800.5}
                   />
-                  <BalanceDisplay balance={123.4567} symbol="ETH" size="lg" />
-                  <BalanceDisplay balance={0} symbol="ETH" loading />
+                  <BalanceDisplay balance={123.4567} symbol="MINA" size="lg" />
+                  <BalanceDisplay balance={0} symbol="MINA" loading />
                 </div>
               </div>
 
@@ -547,7 +586,7 @@ const PlaygroundPage: React.FC = () => {
                     transaction={{
                       to: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
                       amount: '1.5',
-                      symbol: 'ETH',
+                      symbol: 'MINA',
                       fee: '0.002',
                       network: 'mainnet',
                     }}
@@ -589,6 +628,117 @@ const PlaygroundPage: React.FC = () => {
                     'least',
                   ]}
                 />
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">
+                  Advanced Components (Part 2)
+                </h3>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>Animated Number</Label>
+                    <div className="text-2xl font-bold">
+                      <AnimatedNumber value={1234.56} prefix="$" decimals={2} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Account Card</Label>
+                    <AccountCard
+                      account={{
+                        name: 'Main Account',
+                        address: 'B62qjsV6W2...7j3d',
+                        balance: '1,234.56',
+                        symbol: 'MINA',
+                      }}
+                      isActive={true}
+                      onRename={() => {}}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Asset Card 123</Label>
+                    <AssetCard
+                      name="Mina Protocol"
+                      symbol="MINA"
+                      balance={1500.5}
+                      price={1.25}
+                      change24h={5.4}
+                      onClick={() => console.log('Asset clicked')}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Validator Card</Label>
+                    <ValidatorCard
+                      name="MinaExplorer"
+                      address="B62qpt..."
+                      stake={50000000}
+                      fee={5}
+                      delegators={1200}
+                      isDelegated={true}
+                      onDelegate={() => console.log('Delegate clicked')}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Send Form</Label>
+                  <Card className="p-4">
+                    <SendForm
+                      balance="1000"
+                      symbol="MINA"
+                      price={1.23}
+                      onSubmit={async (data) => console.log(data)}
+                    />
+                  </Card>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Stake Form</Label>
+                  <Card className="p-4">
+                    <StakeForm
+                      balance="1000"
+                      symbol="MINA"
+                      validators={[
+                        { id: '1', name: 'Validator 1', apy: 12 },
+                        { id: '2', name: 'Validator 2', apy: 10 },
+                      ]}
+                      onSubmit={async (data) => console.log(data)}
+                    />
+                  </Card>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Validator List</Label>
+                  <div className="h-[400px] border rounded-md">
+                    <ValidatorList validators={mockValidators} />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Transaction List</Label>
+                  <div className="h-[400px] border rounded-md">
+                    <TransactionList
+                      transactions={Array.from({ length: 20 }).map((_, i) => ({
+                        id: String(i),
+                        type: i % 2 === 0 ? "payment" : "delegation",
+                        status: "applied",
+                        amount: 100,
+                        symbol: "MINA",
+                        sender: "B62...",
+                        receiver: "B62...",
+                        isIncoming: i % 2 !== 0,
+                        fee: 0.1,
+                        timestamp: "2024-01-01",
+                        hash: "0x...",
+                      }))}
+                    />
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
