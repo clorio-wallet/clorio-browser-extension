@@ -63,23 +63,21 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
-import {
-  AddressDisplay,
-  BalanceDisplay,
-  HoldToConfirmButton,
-  PasswordInput,
-  NetworkBadge,
-  TransactionConfirmDialog,
-  SeedPhraseDisplay,
-  AccountCard,
-  AssetCard,
-  ValidatorCard,
-  ValidatorList,
-  TransactionList,
-  SendForm,
-  StakeForm,
-} from '@/components/wallet';
-import { AnimatedNumber } from '@/components/ui';
+import { AddressDisplay } from '@/components/wallet/address-display';
+import { BalanceDisplay } from '@/components/wallet/balance-display';
+import { HoldToConfirmButton } from '@/components/wallet/hold-to-confirm-button';
+import { PasswordInput } from '@/components/wallet/password-input';
+import { NetworkBadge } from '@/components/wallet/network-badge';
+import { TransactionConfirmDialog } from '@/components/wallet/transaction-confirm-dialog';
+import { SeedPhraseDisplay } from '@/components/wallet/seed-phrase-display';
+import { AccountCard } from '@/components/wallet/account-card';
+import { AssetCard } from '@/components/wallet/asset-card';
+import { ValidatorCard } from '@/components/wallet/validator-card';
+import { ValidatorList } from '@/components/wallet/validator-list';
+import { TransactionList } from '@/components/wallet/transaction-list';
+import { SendForm } from '@/components/wallet/send-form';
+import { StakeForm } from '@/components/wallet/stake-form';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 
 const mockValidators = [
   {

@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
   Button,
 } from "@/components/ui";
-import { AddressDisplay, BalanceDisplay } from "@/components/wallet";
+import { AddressDisplay } from "./address-display";
+import { BalanceDisplay } from "./balance-display";
 
 interface AccountCardProps {
   account: {

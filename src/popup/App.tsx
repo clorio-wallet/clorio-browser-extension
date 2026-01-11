@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useSidePanelMode } from '@/hooks/use-side-panel-mode';
 import PlaygroundPage from './Playground';
 import LoginPage from '@/pages/Login';
-import ImportWalletPage from '@/pages/onboarding/ImportWallet';
+import { ImportWalletPage } from '@/pages/onboarding/import-wallet';
 import DashboardPage from '@/pages/Dashboard';
 import { WelcomePage } from '@/pages/welcome';
 import { CreateWalletPage } from '@/pages/onboarding/create-wallet';
