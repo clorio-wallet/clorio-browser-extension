@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { SeedPhraseDisplay } from '@/components/wallet/seed-phrase-display';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { useSessionStore } from '@/stores/session-store';
 import { CryptoService } from '@/lib/crypto';
 import { storage } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export const CreateWalletPage: React.FC = () => {
   const navigate = useNavigate();
@@ -18,12 +19,14 @@ export const CreateWalletPage: React.FC = () => {
   const [mnemonic, setMnemonic] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
 
-  useEffect(() => {
-    // Generate mnemonic on mount
+  const handleReveal = () => {
+    // Generate mnemonic only when user is ready
     const mn = generateMnemonic(wordlist);
     setMnemonic(mn.split(' '));
-  }, []);
+    setIsRevealed(true);
+  };
 
   const handleFinish = async () => {
     if (!tempPassword) {
@@ -77,8 +80,27 @@ export const CreateWalletPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full space-y-6 py-4">
-      <div className="space-y-2">
+    <div className="relative flex flex-col h-full space-y-6 py-4">
+      {!isRevealed && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/80 backdrop-blur-xl">
+          <div className="space-y-6 max-w-[280px] text-center animate-in fade-in duration-500">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-serif text-foreground tracking-tight">
+                MAKE SURE YOU'RE ALONE
+              </h2>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Confirm that your screen is not being recorded and is visible
+                only to you.
+              </p>
+            </div>
+            <Button onClick={handleReveal} className="w-full" size="lg">
+              Let's start
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <div className={cn('space-y-2', !isRevealed && 'blur-sm')}>
         <h1 className="text-xl font-bold">Secret Recovery Phrase</h1>
         <p className="text-sm text-muted-foreground">
           This phrase is the ONLY way to recover your wallet. Do not share it
@@ -86,20 +108,23 @@ export const CreateWalletPage: React.FC = () => {
         </p>
       </div>
 
-      <SeedPhraseDisplay mnemonic={mnemonic} />
+      <div className={cn('flex-1', !isRevealed && 'blur-sm')}>
+        <SeedPhraseDisplay mnemonic={mnemonic} />
 
-      <div className="flex items-center space-x-2 mt-4">
-        <Checkbox
-          id="saved"
-          checked={saved}
-          onCheckedChange={(c) => setSaved(c as boolean)}
-        />
-        <Label htmlFor="saved" className="text-sm">
-          I have saved my secret recovery phrase
-        </Label>
+        <div className="flex items-center space-x-2 mt-4">
+          <Checkbox
+            id="saved"
+            checked={saved}
+            onCheckedChange={(c) => setSaved(c as boolean)}
+            disabled={!isRevealed}
+          />
+          <Label htmlFor="saved" className="text-sm">
+            I have saved my secret recovery phrase
+          </Label>
+        </div>
       </div>
 
-      <div className="pt-4 flex gap-2">
+      <div className={cn('pt-4 flex gap-2', !isRevealed && 'blur-sm')}>
         <Button
           variant="outline"
           className="flex-1"
