@@ -11,7 +11,11 @@ import { SeedPhraseInput } from '@/components/wallet/seed-phrase-input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AppMessage, ValidatePrivateKeyResponse, DeriveKeysResponse } from '@/messages/types';
+import {
+  AppMessage,
+  ValidatePrivateKeyResponse,
+  DeriveKeysResponse,
+} from '@/messages/types';
 import {
   Dialog,
   DialogContent,
@@ -32,7 +36,10 @@ export const ImportWalletPage: React.FC = () => {
   );
   const [privateKey, setPrivateKey] = useState('');
   const [showDebug, setShowDebug] = useState(false);
-  const [debugKeys, setDebugKeys] = useState<{ publicKey: string; privateKey: string } | null>(null);
+  const [debugKeys, setDebugKeys] = useState<{
+    publicKey: string;
+    privateKey: string;
+  } | null>(null);
 
   const handleFinish = async () => {
     if (!tempPassword) {
@@ -71,12 +78,16 @@ export const ImportWalletPage: React.FC = () => {
           type: 'DERIVE_KEYS_FROM_MNEMONIC',
           payload: { mnemonic: mnemonicString },
         };
-        const response = (await chrome.runtime.sendMessage(message)) as DeriveKeysResponse | { error: string };
+        const response = (await chrome.runtime.sendMessage(message)) as
+          | DeriveKeysResponse
+          | { error: string };
         if ('error' in response) {
           throw new Error(response.error);
         }
-        derivedKeys = { publicKey: response.publicKey, privateKey: response.privateKey };
-
+        derivedKeys = {
+          publicKey: response.publicKey,
+          privateKey: response.privateKey,
+        };
       } else {
         if (!privateKey.trim()) {
           toast({
@@ -106,7 +117,10 @@ export const ImportWalletPage: React.FC = () => {
           return;
         }
         secretToEncrypt = privateKey.trim();
-        derivedKeys = { publicKey: response.publicKey || '', privateKey: privateKey.trim() };
+        derivedKeys = {
+          publicKey: response.publicKey || '',
+          privateKey: privateKey.trim(),
+        };
       }
 
       // Encrypt the secret
@@ -135,7 +149,6 @@ export const ImportWalletPage: React.FC = () => {
         title: 'Wallet Imported',
         description: 'Your wallet has been successfully imported.',
       });
-
     } catch (error) {
       console.error('Failed to import wallet:', error);
       toast({
@@ -211,7 +224,10 @@ export const ImportWalletPage: React.FC = () => {
         </Button>
       </div>
 
-      <Dialog open={showDebug} onOpenChange={(open) => !open && handleCloseDebug()}>
+      <Dialog
+        open={showDebug}
+        onOpenChange={(open) => !open && handleCloseDebug()}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Wallet Imported (Debug)</DialogTitle>

@@ -5,11 +5,16 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "codegen": "graphql-codegen"
   },
   "private": true,
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0",
+    "@graphql-codegen/cli": "^6.1.0",
+    "@graphql-codegen/typescript": "^5.0.7",
+    "@graphql-codegen/typescript-operations": "^5.0.7",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.4",
     "@playwright/test": "^1.49.0",
     "@testing-library/react": "^16.1.0",
     "@types/bun": "latest",
@@ -20,6 +25,7 @@
     "@typescript-eslint/parser": "^8.18.0",
     "@vitejs/plugin-react": "^5.1.2",
     "autoprefixer": "^10.4.0",
+    "dotenv": "^17.2.3",
     "eslint": "^9.16.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
@@ -39,6 +45,7 @@
     "typescript": "^5.7.0"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.11",
     "@hookform/resolvers": "^5.2.2",
     "@noble/curves": "^1.7.0",
     "@noble/hashes": "^2.0.1",
@@ -58,11 +65,13 @@
     "@scure/bip32": "^1.6.0",
     "@scure/bip39": "^1.5.0",
     "@tanstack/react-virtual": "^3.13.13",
+    "apollo3-cache-persist": "^0.15.0",
     "argon2-browser": "^1.18.0",
     "bignumber.js": "^9.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
+    "graphql": "^16.12.0",
     "lucide-react": "^0.562.0",
     "mina-signer": "^3.1.0",
     "radix-ui": "^1.4.3",
