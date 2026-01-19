@@ -18,8 +18,9 @@ interface SessionState {
   setHasVault: (hasVault: boolean) => void;
 
   // Actions
-  logout: () => void;
+  logout: () => Promise<void>;
   resetWallet: () => Promise<void>;
+  restoreSession: () => Promise<boolean>;
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
@@ -35,20 +36,65 @@ export const useSessionStore = create<SessionState>((set) => ({
   hasVault: false,
   setHasVault: (hasVault) => set({ hasVault }),
 
-  logout: () => set({ 
-    tempPassword: null, 
-    tempMnemonic: null, 
-    isAuthenticated: false 
-  }),
+  logout: async () => {
+    const { sessionStorage } = await import('@/lib/storage');
+    await sessionStorage.remove('clorio_session');
+    set({ 
+      tempPassword: null, 
+      tempMnemonic: null, 
+      isAuthenticated: false 
+    });
+  },
 
   resetWallet: async () => {
-    const { storage } = await import('@/lib/storage');
+    const { storage, sessionStorage } = await import('@/lib/storage');
     await storage.remove('clorio_vault');
+    await sessionStorage.remove('clorio_session');
     set({
       hasVault: false,
       tempPassword: null,
       tempMnemonic: null,
       isAuthenticated: false
     });
+  },
+
+  restoreSession: async () => {
+    try {
+      const { sessionStorage } = await import('@/lib/storage');
+      const { useSettingsStore } = await import('@/stores/settings-store');
+      
+      const session = await sessionStorage.get<{ password: string, timestamp: number }>('clorio_session');
+      if (!session) return false;
+
+      const { autoLockTimeout } = useSettingsStore.getState();
+      
+      // If "On window close" (0), we shouldn't restore
+      if (autoLockTimeout === 0) {
+        await sessionStorage.remove('clorio_session');
+        return false;
+      }
+
+      // If timer based, check expiration
+      if (autoLockTimeout > 0) {
+        const elapsedMinutes = (Date.now() - session.timestamp) / 1000 / 60;
+        if (elapsedMinutes > autoLockTimeout) {
+          await sessionStorage.remove('clorio_session');
+          return false;
+        }
+      }
+
+      // Restore session and update timestamp (sliding expiration)
+      await sessionStorage.set('clorio_session', { ...session, timestamp: Date.now() });
+      
+      set({
+        isAuthenticated: true,
+        tempPassword: session.password,
+        hasVault: true
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to restore session:', error);
+      return false;
+    }
   },
 }));

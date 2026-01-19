@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PasswordInput } from '@/components/wallet/password-input';
+import { Spinner } from '@/components/ui/spinner';
 import { useNavigate } from 'react-router-dom';
-import { storage } from '@/lib/storage';
+import { storage, sessionStorage } from '@/lib/storage';
 import { CryptoService } from '@/lib/crypto';
 import { useSessionStore } from '@/stores/session-store';
+import { useSettingsStore } from '@/stores/settings-store';
 import { useToast } from '@/hooks/use-toast';
 
 interface VaultData {
@@ -19,9 +21,23 @@ interface VaultData {
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setIsAuthenticated, setHasVault, setTempPassword } = useSessionStore();
+  const { setIsAuthenticated, setHasVault, setTempPassword, isAuthenticated } = useSessionStore();
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +70,15 @@ const LoginPage: React.FC = () => {
       setHasVault(true);
       setTempPassword(password); // Store password in session for subsequent operations
       
+      // Save session if persistence is enabled
+      const { autoLockTimeout } = useSettingsStore.getState();
+      if (autoLockTimeout !== 0) {
+        await sessionStorage.set('clorio_session', {
+          password,
+          timestamp: Date.now()
+        });
+      }
+
       toast({
         title: 'Welcome Back',
         description: 'Wallet unlocked successfully.',

@@ -6,6 +6,7 @@ import PlaygroundPage from './Playground';
 import LoginPage from '@/pages/Login';
 import { ImportWalletPage } from '@/pages/onboarding/import-wallet';
 import DashboardPage from '@/pages/Dashboard';
+import SettingsPage from '@/pages/Settings';
 import { WelcomePage } from '@/pages/welcome';
 import { CreateWalletPage } from '@/pages/onboarding/create-wallet';
 import { VerifyMnemonicPage } from '@/pages/onboarding/verify-mnemonic';
@@ -14,6 +15,7 @@ import { ProtectedRoute } from '@/components/auth/protected-route';
 import { ApolloProvider } from '@apollo/client/react';
 import { client, initCache } from '@/lib/graphql/client';
 import { useNetworkStore } from '@/stores/network-store';
+import { useSessionStore } from '@/stores/session-store';
 import { useEffect } from 'react';
 
 const Layout = () => {
@@ -38,12 +40,14 @@ const Layout = () => {
 
 const App: React.FC = () => {
   const { fetchNetworks } = useNetworkStore();
+  const { restoreSession } = useSessionStore();
   const [isRestored, setIsRestored] = useState(false);
 
   useEffect(() => {
     // Initialize cache and fetch networks
     const init = async () => {
       await initCache();
+      await restoreSession();
       setIsRestored(true);
       await fetchNetworks();
     };
@@ -85,7 +89,7 @@ const App: React.FC = () => {
               path="/settings"
               element={
                 <ProtectedRoute>
-                  <DashboardPage />
+                  <SettingsPage />
                 </ProtectedRoute>
               }
             />
