@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSessionStore } from '@/stores/session-store';
 import { storage } from '@/lib/storage';
 import Dock from '@/components/ui/dock';
@@ -14,6 +14,7 @@ interface ProtectedRouteProps {
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, setHasVault } = useSessionStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const { uiMode } = useSidePanelMode();
 
   useEffect(() => {
@@ -51,6 +52,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     },
   ];
 
+  const activeLabel = navItems.find((item) => {
+    if (item.label === 'Home') return location.pathname === '/dashboard';
+    if (item.label === 'Settings') return location.pathname.startsWith('/settings');
+    return false;
+  })?.label;
+
   return (
     <div className="flex flex-col h-full relative">
       <div className="flex-1 overflow-y-auto pb-24">{children}</div>
@@ -62,7 +69,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
             : 'left-0 right-0 px-4'
         )}
       >
-        <Dock items={navItems} className="py-2" />
+        <Dock items={navItems} activeLabel={activeLabel} className="py-2" />
       </div>
     </div>
   );

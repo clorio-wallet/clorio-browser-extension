@@ -18,10 +18,10 @@ interface DockProps {
     label: string
     onClick?: () => void
   }[]
+  activeLabel?: string
 }
 
-export default function Dock({ items, className }: DockProps) {
-  const [active, setActive] = React.useState<string | null>(null)
+export default function Dock({ items, className, activeLabel }: DockProps) {
   const [hovered, setHovered] = React.useState<number | null>(null)
 
   return (
@@ -39,7 +39,7 @@ export default function Dock({ items, className }: DockProps) {
       >
         <TooltipProvider delayDuration={100}>
           {items.map((item, i) => {
-            const isActive = active === item.label
+            const isActive = activeLabel === item.label
             const isHovered = hovered === i
 
             return (
@@ -64,7 +64,6 @@ export default function Dock({ items, className }: DockProps) {
                         isHovered && "shadow-lg shadow-primary/20"
                       )}
                       onClick={() => {
-                        setActive(item.label)
                         item.onClick?.()
                       }}
                     >
