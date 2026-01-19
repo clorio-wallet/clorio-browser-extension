@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useMinimumLoading } from '@/hooks/use-minimum-loading';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -42,6 +43,8 @@ const DashboardPage: React.FC = () => {
     pollInterval: 30000,
     fetchPolicy: 'cache-and-network',
   });
+
+  const displayLoading = useMinimumLoading(loading, 1000);
 
   const balanceRaw = data?.accountByKey?.balance?.total || 0;
   const balanceMina = Number(balanceRaw) / 1e9;
@@ -81,9 +84,9 @@ const DashboardPage: React.FC = () => {
             size="icon"
             onClick={handleRefresh}
             title="Refresh Balance"
-            disabled={loading}
+            disabled={displayLoading}
           >
-            <RefreshCcw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCcw className={`h-5 w-5 ${displayLoading ? 'animate-spin' : ''}`} />
           </Button>
           <Button
             variant="ghost"
@@ -134,7 +137,7 @@ const DashboardPage: React.FC = () => {
             symbol: 'MINA',
           }}
           isActive={true}
-          isLoading={loading}
+          isLoading={displayLoading}
           explorerUrl={network.explorerUrl}
           onDelete={() => setIsDeleteDialogOpen(true)}
           onViewPrivateKey={() => {
