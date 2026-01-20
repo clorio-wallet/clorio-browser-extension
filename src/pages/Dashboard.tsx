@@ -51,9 +51,6 @@ const DashboardPage: React.FC = () => {
 
   const handleRefresh = () => {
     refetch();
-    toast({
-      description: 'Balance updated',
-    });
   };
 
   const handleLogout = () => {
@@ -62,7 +59,7 @@ const DashboardPage: React.FC = () => {
       title: 'Logged Out',
       description: 'Your session has been cleared.',
     });
-    navigate('/login');
+    navigate('/wallet-unlock');
   };
 
   const handleDeleteWallet = async () => {
@@ -86,7 +83,9 @@ const DashboardPage: React.FC = () => {
             title="Refresh Balance"
             disabled={displayLoading}
           >
-            <RefreshCcw className={`h-5 w-5 ${displayLoading ? 'animate-spin' : ''}`} />
+            <RefreshCcw
+              className={`h-5 w-5 ${displayLoading ? 'animate-spin' : ''}`}
+            />
           </Button>
           <Button
             variant="ghost"
@@ -103,8 +102,11 @@ const DashboardPage: React.FC = () => {
           >
             <Lock className="h-5 w-5" />
           </Button>
-          
-          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+
+          <AlertDialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
@@ -153,7 +155,7 @@ const DashboardPage: React.FC = () => {
             });
           }}
         />
-        
+
         {error && (
           <p className="text-sm text-destructive text-center">
             Failed to load balance: {error.message}

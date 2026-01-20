@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { HashRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom';
+import {
+  HashRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useOutlet,
+  useNavigate,
+} from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useSidePanelMode } from '@/hooks/use-side-panel-mode';
 import PlaygroundPage from './Playground';
-import LoginPage from '@/pages/Login';
+import WalletUnlockPage from '@/pages/wallet-unlock';
 import { ImportWalletPage } from '@/pages/onboarding/import-wallet';
 import DashboardPage from '@/pages/Dashboard';
 import SettingsPage from '@/pages/Settings';
@@ -17,9 +25,40 @@ import { client, initCache } from '@/lib/graphql/client';
 import { useNetworkStore } from '@/stores/network-store';
 import { useSessionStore } from '@/stores/session-store';
 import { useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import Dock from '@/components/ui/dock';
+import { Home, Settings } from 'lucide-react';
+
+// Configuration: List of routes (pathname) that should NOT have transition animations
+const NO_ANIMATION_ROUTES: string[] = [];
 
 const Layout = () => {
   const { uiMode } = useSidePanelMode();
+  const location = useLocation();
+  const element = useOutlet();
+  const navigate = useNavigate();
+
+  const isAnimated = !NO_ANIMATION_ROUTES.includes(location.pathname);
+
+  const navItems = [
+    {
+      icon: Home,
+      label: 'Home',
+      onClick: () => navigate('/dashboard'),
+    },
+    {
+      icon: Settings,
+      label: 'Settings',
+      onClick: () => navigate('/settings'),
+    },
+  ];
+
+  const activeLabel = navItems.find((item) => {
+    if (item.label === 'Home') return location.pathname === '/dashboard';
+    if (item.label === 'Settings')
+      return location.pathname.startsWith('/settings');
+    return false;
+  })?.label;
 
   return (
     <div
@@ -30,9 +69,34 @@ const Layout = () => {
           : 'w-full',
       )}
     >
-      <main className="flex-1 overflow-auto relative px-4">
-        <Outlet />
+      <main className="flex-1 overflow-auto relative px-4 pb-24">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={isAnimated ? { opacity: 0, y: 5 } : { opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={isAnimated ? { opacity: 0, y: 5 } : { opacity: 0, y: 0 }}
+            transition={{ duration: isAnimated ? 0.2 : 0, ease: 'easeInOut' }}
+            className="h-full"
+          >
+            {element}
+          </motion.div>
+        </AnimatePresence>
       </main>
+
+      {activeLabel && (
+        <div
+          className={cn(
+            'fixed bottom-4 z-50 transition-all duration-300',
+            uiMode === 'popup'
+              ? 'left-1/2 -translate-x-1/2 w-full max-w-[350px] px-4'
+              : 'left-0 right-0 px-4',
+          )}
+        >
+          <Dock items={navItems} activeLabel={activeLabel} className="py-2" />
+        </div>
+      )}
+
       <Toaster />
     </div>
   );
@@ -73,7 +137,7 @@ const App: React.FC = () => {
           <Route element={<Layout />}>
             <Route path="/" element={<Navigate to="/welcome" replace />} />
             <Route path="/welcome" element={<WelcomePage />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/wallet-unlock" element={<WalletUnlockPage />} />
             <Route path="/onboarding/create" element={<CreateWalletPage />} />
             <Route path="/onboarding/verify" element={<VerifyMnemonicPage />} />
             <Route path="/onboarding/import" element={<ImportWalletPage />} />

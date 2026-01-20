@@ -54,9 +54,12 @@ export function AccountCard({
 
   return (
     <motion.div
-      whileHover={{ scale: 1.01 }}
+      layout
       whileTap={{ scale: 0.99 }}
-      transition={{ duration: 0.15 }}
+      transition={{ 
+        layout: { duration: 0.3, type: "spring", stiffness: 300, damping: 30 },
+        default: { duration: 0.15 }
+      }}
     >
       <Card
         className={cn(

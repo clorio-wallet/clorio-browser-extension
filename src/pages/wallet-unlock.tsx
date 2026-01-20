@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { PasswordInput } from '@/components/wallet/password-input';
 import { Spinner } from '@/components/ui/spinner';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +17,9 @@ import { useSessionStore } from '@/stores/session-store';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useToast } from '@/hooks/use-toast';
 
+import Lottie from 'lottie-react';
+import lockAnimation from '../animations/lock.json';
+
 interface VaultData {
   encryptedSeed: string;
   salt: string;
@@ -18,10 +28,11 @@ interface VaultData {
   type?: 'mnemonic' | 'privateKey';
 }
 
-const LoginPage: React.FC = () => {
+const WalletUnlockPage: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setIsAuthenticated, setHasVault, setTempPassword, isAuthenticated } = useSessionStore();
+  const { setIsAuthenticated, setHasVault, setTempPassword, isAuthenticated } =
+    useSessionStore();
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,14 +50,14 @@ const LoginPage: React.FC = () => {
     );
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) return;
 
     setIsLoading(true);
     try {
       const vault = await storage.get<VaultData>('clorio_vault');
-      
+
       if (!vault) {
         toast({
           variant: 'destructive',
@@ -62,20 +73,20 @@ const LoginPage: React.FC = () => {
         vault.encryptedSeed,
         password,
         vault.salt,
-        vault.iv
+        vault.iv,
       );
 
       // If successful:
       setIsAuthenticated(true);
       setHasVault(true);
       setTempPassword(password); // Store password in session for subsequent operations
-      
+
       // Save session if persistence is enabled
       const { autoLockTimeout } = useSettingsStore.getState();
       if (autoLockTimeout !== 0) {
         await sessionStorage.set('clorio_session', {
           password,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
 
@@ -98,28 +109,40 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh]">
+    <div className="flex flex-col items-center justify-center h-[100vh]">
+      <div className='w-[200px] h-[200px]'>
+        <Lottie
+          animationData={lockAnimation}
+          loop={false}
+        />
+      </div>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Enter your password to unlock your wallet</CardDescription>
+          <CardDescription>
+            Enter your password to unlock your wallet
+          </CardDescription>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleUnlock}>
           <CardContent className="space-y-4">
-            <PasswordInput 
-              id="password" 
-              placeholder="Enter password" 
+            <PasswordInput
+              id="password"
+              placeholder="Enter password"
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={!password || isLoading}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!password || isLoading}
+            >
               {isLoading ? 'Unlocking...' : 'Unlock'}
             </Button>
-            <Button 
-              variant="link" 
+            <Button
+              variant="link"
               className="w-full text-xs text-muted-foreground"
               type="button"
               onClick={() => navigate('/onboarding/import')}
@@ -133,4 +156,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default WalletUnlockPage;

@@ -17,7 +17,7 @@ export const WelcomePage: React.FC = () => {
       const vault = await storage.get('clorio_vault');
       if (vault) {
         setHasVault(true);
-        navigate('/login');
+        navigate('/wallet-unlock');
       }
     };
     checkVault();
