@@ -10,6 +10,7 @@ import {
   Layout,
   Trash2,
   RefreshCw,
+  Key,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWalletStore } from '@/stores/wallet-store';
@@ -33,6 +34,7 @@ import {
   REFRESH_RATE_OPTIONS,
 } from '@/components/settings/refresh-rate-sheet';
 import { ResetWalletDialog } from '@/components/settings/reset-wallet-dialog';
+import { ViewPrivateKeySheet } from '@/components/wallet/view-private-key-sheet';
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,6 +49,7 @@ const SettingsPage: React.FC = () => {
   const [isNetworkOpen, setIsNetworkOpen] = React.useState(false);
   const [isSecurityOpen, setIsSecurityOpen] = React.useState(false);
   const [isRefreshRateOpen, setIsRefreshRateOpen] = React.useState(false);
+  const [isViewKeyOpen, setIsViewKeyOpen] = React.useState(false);
 
   const currentNetwork = networks[networkId] || DEFAULT_NETWORKS.mainnet;
   const currentAutoLockLabel =
@@ -143,6 +146,11 @@ const SettingsPage: React.FC = () => {
             onClick={() => setIsSecurityOpen(true)}
           />
           <SettingsItem
+            icon={Key}
+            label="View Private Key"
+            onClick={() => setIsViewKeyOpen(true)}
+          />
+          <SettingsItem
             icon={RefreshCw}
             label="Balance Refresh"
             value={currentRefreshRateLabel}
@@ -191,6 +199,11 @@ const SettingsPage: React.FC = () => {
       <RefreshRateSheet
         open={isRefreshRateOpen}
         onOpenChange={setIsRefreshRateOpen}
+      />
+
+      <ViewPrivateKeySheet
+        open={isViewKeyOpen}
+        onOpenChange={setIsViewKeyOpen}
       />
     </div>
   );

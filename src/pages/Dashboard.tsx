@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { ViewPrivateKeySheet } from '@/components/wallet/view-private-key-sheet';
 import { useMinimumLoading } from '@/hooks/use-minimum-loading';
 import { NetworkBadge } from '@/components/wallet';
 import { LoopingLottie } from '@/components/ui/looping-lottie';
@@ -31,6 +32,7 @@ const DashboardPage: React.FC = () => {
   const { networkId, balancePollInterval } = useSettingsStore();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isViewKeyDialogOpen, setIsViewKeyDialogOpen] = useState(false);
 
   const network = DEFAULT_NETWORKS[networkId] || DEFAULT_NETWORKS.mainnet;
   const pollIntervalMs =
@@ -74,6 +76,10 @@ const DashboardPage: React.FC = () => {
       description: 'Your wallet has been removed from this device.',
     });
     navigate('/welcome');
+  };
+
+  const handleViewPrivateKey = () => {
+    setIsViewKeyDialogOpen(true);
   };
 
   return (
@@ -132,6 +138,11 @@ const DashboardPage: React.FC = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          <ViewPrivateKeySheet
+            open={isViewKeyDialogOpen}
+            onOpenChange={setIsViewKeyDialogOpen}
+          />
         </div>
       </header>
 
@@ -147,12 +158,7 @@ const DashboardPage: React.FC = () => {
           isLoading={displayLoading}
           explorerUrl={network.explorerUrl}
           onDelete={() => setIsDeleteDialogOpen(true)}
-          onViewPrivateKey={() => {
-            toast({
-              title: 'Not Implemented',
-              description: 'View private key functionality coming soon.',
-            });
-          }}
+          onViewPrivateKey={handleViewPrivateKey}
           onRename={() => {
             toast({
               title: 'Not Implemented',
