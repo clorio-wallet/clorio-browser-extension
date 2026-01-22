@@ -15,13 +15,14 @@
     "available_label": "Disponible",
     "recipient_label": "Destinatario",
     "recipient_placeholder": "Dirección",
-    "memo_label": "Memo (Opcional)",
+    "memo_label": "Memo",
     "memo_placeholder": "Nota pública...",
     "network_fee_label": "Tarifa de red",
     "total_label": "Total",
     "error_failed": "Error al enviar la transacción",
     "sending_button": "Enviando...",
-    "send_button": "Enviar"
+    "send_button": "Enviar",
+    "continue_button": "Continuar"
   },
   "staking": {
     "validator_label": "Validador",
@@ -82,7 +83,8 @@
     "confirm_delete_desc": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu billetera de este dispositivo. Asegúrate de haber respaldado tu Frase de Recuperación Secreta o Clave Privada.",
     "no_transactions": "No hay transacciones recientes",
     "not_implemented": "No implementado",
-    "rename_coming_soon": "La función de renombrar estará disponible pronto."
+    "rename_coming_soon": "La función de renombrar estará disponible pronto.",
+    "send_tx_coming_soon": "Funcionalidad de envío de transacción pronto disponible."
   },
   "settings": {
     "title": "Configuración",
@@ -110,12 +112,12 @@
       "desc": "Gestiona tus preferencias de seguridad de la billetera.",
       "auto_lock_timer": "Temporizador de bloqueo automático",
       "options": {
-          "window_close": "Al cerrar ventana",
-          "5_min": "5 minutos",
-          "15_min": "15 minutos",
-          "30_min": "30 minutos",
-          "1_hour": "1 hora",
-          "never": "Nunca"
+        "window_close": "Al cerrar ventana",
+        "5_min": "5 minutos",
+        "15_min": "15 minutos",
+        "30_min": "30 minutos",
+        "1_hour": "1 hora",
+        "never": "Nunca"
       }
     },
     "reset_sheet": {

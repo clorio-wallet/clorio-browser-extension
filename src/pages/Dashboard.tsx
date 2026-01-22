@@ -166,6 +166,13 @@ const DashboardPage: React.FC = () => {
             });
           }}
         />
+        <Button
+          className="w-full"
+          onClick={() => navigate('/send')}
+          disabled={displayLoading || !publicKey}
+        >
+          {t('send.send_button')}
+        </Button>
       </div>
 
       <div className="flex flex-col items-center justify-center text-muted-foreground text-sm py-8 space-y-4">

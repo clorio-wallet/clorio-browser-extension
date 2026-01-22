@@ -1,22 +1,16 @@
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Wallet, AlertCircle } from "lucide-react";
-import { cn, formatBalance } from "@/lib/utils";
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight, AlertCircle } from 'lucide-react';
+import { cn, formatBalance } from '@/lib/utils';
+import { Input, Button, Label } from '@/components/ui';
 import {
-  Input,
-  Button,
-  Label,
-  Card,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui";
-import { sendTransactionSchema, type SendTransactionFormData } from "@/lib/validations";
-import { AnimatedNumber } from "@/components/ui/animated-number";
+  sendTransactionSchema,
+  type SendTransactionFormData,
+} from '@/lib/validations';
+import { AnimatedNumber } from '@/components/ui/animated-number';
 import { useTranslation } from 'react-i18next';
+import { AmountInput } from '@/components/wallet/amount-input';
 
 interface SendFormProps {
   balance: string;
@@ -48,21 +42,32 @@ export function SendForm({
   } = useForm<SendTransactionFormData>({
     resolver: zodResolver(sendTransactionSchema),
     defaultValues: {
-      amount: "",
-      recipient: "",
-      memo: "",
+      amount: '',
+      recipient: '',
+      memo: '',
+      fee: '0.1',
     },
   });
 
-  const amount = watch("amount");
+  const amount = watch('amount');
+  const fee = watch('fee');
   const parsedAmount = parseFloat(amount) || 0;
+  const parsedFee = parseFloat(fee) || 0;
   const fiatValue = parsedAmount * price;
   const maxBalance = parseFloat(balance);
 
-  const handleMaxClick = () => {
-    // Leave some dust for fees - simplified logic
-    const maxAmount = Math.max(0, maxBalance - 0.1); 
-    setValue("amount", maxAmount.toString());
+  const {
+    ref: amountRef,
+    onBlur: amountOnBlur,
+    name: amountName,
+  } = register('amount');
+
+  const setPercentageAmount = (percentage: number) => {
+    if (!Number.isFinite(maxBalance) || maxBalance <= 0) return;
+    const currentFee = parseFloat(watch('fee')) || 0;
+    const available = Math.max(0, maxBalance - currentFee);
+    const value = available * percentage;
+    setValue('amount', value > 0 ? value.toString() : '');
   };
 
   const onFormSubmit = async (data: SendTransactionFormData) => {
@@ -80,101 +85,142 @@ export function SendForm({
   return (
     <form
       onSubmit={handleSubmit(onFormSubmit)}
-      className={cn("space-y-6", className)}
+      className={cn('space-y-2', className)}
     >
-      {/* Amount Input */}
-      <div className="space-y-2">
-        <Label>{t('send.amount_label')}</Label>
-        <div className="relative">
-          <Input
-            {...register("amount")}
-            placeholder="0.00"
-            className="pr-20 text-lg font-mono"
-            type="number"
-            step="any"
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-xs"
-              onClick={handleMaxClick}
-            >
-              MAX
-            </Button>
-            <span className="font-medium text-muted-foreground">{symbol}</span>
+      <div className="space-y-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <AmountInput
+              ref={amountRef}
+              name={amountName}
+              value={amount}
+              onChange={(val) =>
+                setValue('amount', val, { shouldValidate: true })
+              }
+              onBlur={amountOnBlur}
+              placeholder="0"
+              error={!!errors.amount}
+            />
+            <div className="mt-1 text-sm text-muted-foreground">
+              ${formatBalance(fiatValue.toString(), 2)}
+            </div>
+          </div>
+          <div className="text-right text-sm">
+            <div className="text-muted-foreground">
+              {t('send.available_label')}
+            </div>
+            <div className="font-semibold">
+              {formatBalance(balance)} {symbol}
+            </div>
           </div>
         </div>
-        <div className="flex justify-between text-xs text-muted-foreground px-1">
-          <span>
-            {t('send.available_label')}: {formatBalance(balance)} {symbol}
-          </span>
-          <span>≈ ${formatBalance(fiatValue.toString(), 2)}</span>
+
+        <div className="flex justify-between text-xs text-muted-foreground">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="px-3"
+            onClick={() => setPercentageAmount(0.25)}
+          >
+            25%
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="px-3"
+            onClick={() => setPercentageAmount(0.5)}
+          >
+            50%
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="px-3"
+            onClick={() => setPercentageAmount(1)}
+          >
+            100%
+          </Button>
         </div>
         {errors.amount && (
           <p className="text-sm text-destructive">{errors.amount.message}</p>
         )}
       </div>
 
-      {/* Recipient Input */}
+      <div className="border-b border-border" />
+
       <div className="space-y-2">
-        <Label>{t('send.recipient_label')}</Label>
+        <Label className="text-sm text-muted-foreground">
+          {t('send.recipient_label')}
+        </Label>
         <div className="relative">
           <Input
-            {...register("recipient")}
+            {...register('recipient')}
             placeholder={t('send.recipient_placeholder')}
-            className="pl-9 font-mono text-sm"
+            className="bg-transparent border-none shadow-none px-0 h-14 text-lg font-medium tracking-tight focus-visible:ring-0 focus-visible:ring-offset-0"
           />
-          <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
         {errors.recipient && (
           <p className="text-sm text-destructive">{errors.recipient.message}</p>
         )}
       </div>
 
-      {/* Memo Input */}
+      <div className="border-b border-border" />
+
       <div className="space-y-2">
-        <Label>{t('send.memo_label')}</Label>
+        <div className="flex items-center justify-between">
+          <Label className="text-sm text-muted-foreground">
+            {t('send.memo_label')}
+          </Label>
+          <span className="text-xs text-muted-foreground">
+            {t('common.optional', { defaultValue: 'Optional' })} · 32 chars
+          </span>
+        </div>
         <Input
-          {...register("memo")}
+          {...register('memo')}
           placeholder={t('send.memo_placeholder')}
+          maxLength={32}
+          className="bg-transparent border-none shadow-none px-0 h-14 text-lg font-medium tracking-tight focus-visible:ring-0 focus-visible:ring-offset-0"
         />
         {errors.memo && (
           <p className="text-sm text-destructive">{errors.memo.message}</p>
         )}
       </div>
 
-      {/* Summary Card */}
-      <Card className="p-4 bg-muted/50 border-0">
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t('send.network_fee_label')}</span>
-            <span>0.1 {symbol}</span>
-          </div>
-          <div className="flex justify-between font-medium pt-2 border-t">
-            <span>{t('send.total_label')}</span>
-            <div className="text-right">
-              <div>
-                <AnimatedNumber
-                  value={parsedAmount + 0.1}
-                  decimals={4}
-                  suffix={` ${symbol}`}
-                />
-              </div>
-              <div className="text-xs text-muted-foreground">
-                <AnimatedNumber
-                  value={(parsedAmount + 0.1) * price}
-                  prefix="$"
-                  decimals={2}
-                />
-              </div>
-            </div>
+      <div className="space-y-1 text-sm">
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">
+            {t('send.network_fee_label')}
+          </span>
+          <div className="flex items-center gap-2">
+            <Input
+              {...register('fee')}
+              className="w-24 h-8 text-right bg-transparent border-none focus-visible:ring-0 p-0 shadow-none"
+              placeholder="0.000"
+            />
+            <span>{symbol}</span>
           </div>
         </div>
-      </Card>
+        {errors.fee && (
+          <p className="text-sm text-destructive text-right">
+            {errors.fee.message}
+          </p>
+        )}
+        <div className="flex justify-between font-medium">
+          <span>{t('send.total_label')}</span>
+          <span>
+            <AnimatedNumber
+              value={parsedAmount + parsedFee}
+              decimals={4}
+              suffix={` ${symbol}`}
+              duration={.3}
+            />
+          </span>
+        </div>
+      </div>
 
-      {/* Error Message */}
       {error && (
         <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md">
           <AlertCircle className="h-4 w-4" />
@@ -182,7 +228,6 @@ export function SendForm({
         </div>
       )}
 
-      {/* Actions */}
       <div className="flex gap-3 pt-2">
         {onCancel && (
           <Button
@@ -195,12 +240,8 @@ export function SendForm({
             {t('common.cancel')}
           </Button>
         )}
-        <Button
-          type="submit"
-          className="flex-1"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? t('send.sending_button') : t('send.send_button')}
+        <Button type="submit" className="flex-1" disabled={isSubmitting}>
+          {isSubmitting ? t('send.sending_button') : t('send.continue_button')}
           {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
         </Button>
       </div>

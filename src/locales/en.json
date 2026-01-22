@@ -15,13 +15,14 @@
     "available_label": "Available",
     "recipient_label": "Recipient",
     "recipient_placeholder": "Address",
-    "memo_label": "Memo (Optional)",
+    "memo_label": "Memo",
     "memo_placeholder": "Public note...",
     "network_fee_label": "Network Fee",
     "total_label": "Total",
     "error_failed": "Failed to send transaction",
     "sending_button": "Sending...",
-    "send_button": "Send"
+    "send_button": "Send",
+    "continue_button": "Continue"
   },
   "staking": {
     "validator_label": "Validator",
@@ -82,7 +83,8 @@
     "confirm_delete_desc": "This action cannot be undone. This will permanently delete your wallet from this device. Make sure you have backed up your Secret Recovery Phrase or Private Key.",
     "no_transactions": "No recent transactions",
     "not_implemented": "Not Implemented",
-    "rename_coming_soon": "Rename functionality coming soon."
+    "rename_coming_soon": "Rename functionality coming soon.",
+    "send_tx_coming_soon": "Send transaction functionality coming soon."
   },
   "settings": {
     "title": "Settings",
@@ -110,12 +112,12 @@
       "desc": "Manage your wallet security preferences.",
       "auto_lock_timer": "Auto-lock Timer",
       "options": {
-          "window_close": "On window close",
-          "5_min": "5 minutes",
-          "15_min": "15 minutes",
-          "30_min": "30 minutes",
-          "1_hour": "1 hour",
-          "never": "Never"
+        "window_close": "On window close",
+        "5_min": "5 minutes",
+        "15_min": "15 minutes",
+        "30_min": "30 minutes",
+        "1_hour": "1 hour",
+        "never": "Never"
       }
     },
     "reset_sheet": {

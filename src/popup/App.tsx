@@ -13,7 +13,6 @@ import { useSidePanelMode } from '@/hooks/use-side-panel-mode';
 import PlaygroundPage from './Playground';
 import WalletUnlockPage from '@/pages/wallet-unlock';
 import { ImportWalletPage } from '@/pages/onboarding/import-wallet';
-import { WelcomePage } from '@/pages/welcome';
 import { CreateWalletPage } from '@/pages/onboarding/create-wallet';
 import { VerifyMnemonicPage } from '@/pages/onboarding/verify-mnemonic';
 import { Toaster } from '@/components/ui/toaster';
@@ -27,7 +26,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Dock from '@/components/ui/dock';
 import { Home, Settings, HeartHandshake } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { WelcomePage } from '@/pages/Welcome';
 import DashboardPage from '@/pages/Dashboard';
+import SendPage from '@/pages/Send';
 import SettingsPage from '@/pages/Settings';
 
 // Configuration: List of routes (pathname) that should NOT have transition animations
@@ -157,6 +158,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/send"
+              element={
+                <ProtectedRoute>
+                  <SendPage />
                 </ProtectedRoute>
               }
             />

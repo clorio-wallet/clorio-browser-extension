@@ -15,13 +15,14 @@
     "available_label": "Verfügbar",
     "recipient_label": "Empfänger",
     "recipient_placeholder": "Adresse",
-    "memo_label": "Memo (Optional)",
+    "memo_label": "Memo",
     "memo_placeholder": "Öffentliche Notiz...",
     "network_fee_label": "Netzwerkgebühr",
     "total_label": "Gesamt",
     "error_failed": "Transaktion fehlgeschlagen",
     "sending_button": "Senden...",
-    "send_button": "Senden"
+    "send_button": "Senden",
+    "continue_button": "Weiter"
   },
   "staking": {
     "validator_label": "Validator",
@@ -82,7 +83,8 @@
     "confirm_delete_desc": "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird Ihre Wallet dauerhaft von diesem Gerät gelöscht. Stellen Sie sicher, dass Sie Ihre geheime Wiederherstellungsphrase oder Ihren privaten Schlüssel gesichert haben.",
     "no_transactions": "Keine aktuellen Transaktionen",
     "not_implemented": "Nicht implementiert",
-    "rename_coming_soon": "Umbenennungsfunktion kommt bald."
+    "rename_coming_soon": "Umbenennungsfunktion kommt bald.",
+    "send_tx_coming_soon": "Funktion zum Senden von Transaktionen kommt bald."
   },
   "settings": {
     "title": "Einstellungen",
@@ -110,12 +112,12 @@
       "desc": "Verwalten Sie Ihre Wallet-Sicherheitspräferenzen.",
       "auto_lock_timer": "Auto-Sperr-Timer",
       "options": {
-          "window_close": "Beim Schließen des Fensters",
-          "5_min": "5 Minuten",
-          "15_min": "15 Minuten",
-          "30_min": "30 Minuten",
-          "1_hour": "1 Stunde",
-          "never": "Nie"
+        "window_close": "Beim Schließen des Fensters",
+        "5_min": "5 Minuten",
+        "15_min": "15 Minuten",
+        "30_min": "30 Minuten",
+        "1_hour": "1 Stunde",
+        "never": "Nie"
       }
     },
     "reset_sheet": {

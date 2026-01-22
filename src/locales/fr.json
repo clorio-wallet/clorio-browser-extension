@@ -15,13 +15,14 @@
     "available_label": "Disponible",
     "recipient_label": "Destinataire",
     "recipient_placeholder": "Adresse",
-    "memo_label": "Mémo (Facultatif)",
+    "memo_label": "Mémo",
     "memo_placeholder": "Note publique...",
     "network_fee_label": "Frais de réseau",
     "total_label": "Total",
     "error_failed": "Échec de l'envoi de la transaction",
     "sending_button": "Envoi...",
-    "send_button": "Envoyer"
+    "send_button": "Envoyer",
+    "continue_button": "Continuer"
   },
   "staking": {
     "validator_label": "Validateur",
@@ -82,7 +83,8 @@
     "confirm_delete_desc": "Cette action est irréversible. Cela supprimera définitivement votre portefeuille de cet appareil. Assurez-vous d'avoir sauvegardé votre phrase de récupération secrète ou votre clé privée.",
     "no_transactions": "Aucune transaction récente",
     "not_implemented": "Non implémenté",
-    "rename_coming_soon": "La fonctionnalité de renommage sera bientôt disponible."
+    "rename_coming_soon": "La fonctionnalité de renommage sera bientôt disponible.",
+    "send_tx_coming_soon": "Fonctionnalité d'envoi de transaction bientôt disponible."
   },
   "settings": {
     "title": "Paramètres",

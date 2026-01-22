@@ -18,12 +18,22 @@ export const amountSchema = z
   .refine((val) => parseFloat(val) > 0, "Amount must be greater than 0");
 
 /**
+ * Fee validation
+ */
+export const feeSchema = z
+  .string()
+  .min(1, "Fee is required")
+  .refine((val) => !isNaN(parseFloat(val)), "Must be a valid number")
+  .refine((val) => parseFloat(val) >= 0, "Fee must be non-negative");
+
+/**
  * Send transaction schema
  */
 export const sendTransactionSchema = z.object({
   recipient: addressSchema,
   amount: amountSchema,
-  memo: z.string().max(256, "Memo too long").optional(),
+  memo: z.string().max(32, "Memo too long").optional(),
+  fee: feeSchema,
 });
 
 export type SendTransactionFormData = z.infer<typeof sendTransactionSchema>;
