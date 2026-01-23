@@ -7,28 +7,41 @@ import Lottie, {
 interface LoopingLottieProps extends Omit<LottieComponentProps, 'lottieRef'> {
   loopLastSeconds?: number;
   loopDelay?: number; // Delay in ms between loops
+  maxLoops?: number; // Max number of loops (default: infinite)
 }
 
 export const LoopingLottie: React.FC<LoopingLottieProps> = ({
   loopLastSeconds,
   loopDelay = 0,
+  maxLoops,
   animationData,
   onComplete,
   loop,
   ...props
 }) => {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
+  const loopCountRef = useRef(0);
 
   const isCustomLoop =
-    (loopLastSeconds && loopLastSeconds > 0) || (loopDelay && loopDelay > 0);
+    (loopLastSeconds && loopLastSeconds > 0) || (loopDelay && loopDelay > 0) || (maxLoops !== undefined);
   
   // If we have custom loop logic, we disable the native loop so onComplete fires.
   const shouldLoop = isCustomLoop ? false : loop;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleComplete = (e?: any) => {
-    // If we have custom loop logic (either partial loop or delay)
+    // If we have custom loop logic (either partial loop, delay, or maxLoops)
     if (isCustomLoop) {
+      loopCountRef.current += 1;
+
+      // If maxLoops is set and we reached it, stop.
+      if (maxLoops !== undefined && loopCountRef.current >= maxLoops) {
+        if (onComplete) {
+          onComplete(e);
+        }
+        return;
+      }
+
       if (loopDelay > 0) {
         // Pause and wait for delay
         setTimeout(() => {
