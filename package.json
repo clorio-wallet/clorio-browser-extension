@@ -8,7 +8,8 @@
     "build": "vite build",
     "build:firefox": "BROWSER=firefox vite build && node -e \"const fs=require('fs');const p='./dist/manifest.json';const m=JSON.parse(fs.readFileSync(p,'utf8'));if(m.background){delete m.background.service_worker;delete m.background.scripts;m.background.page='background.html';if(m.background.type)delete m.background.type;}fs.writeFileSync(p,JSON.stringify(m,null,2));fs.writeFileSync('./dist/background.html','<script type=\\\"module\\\" src=\\\"service-worker-loader.js\\\"></script>');\"",
     "preview": "vite preview",
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen",
+    "api:gen": "orval"
   },
   "private": true,
   "devDependencies": {
@@ -26,6 +27,7 @@
     "@types/uuid": "^11.0.0",
     "@typescript-eslint/parser": "^8.18.0",
     "@vitejs/plugin-react": "^5.1.2",
+    "ajv": "^8.17.1",
     "autoprefixer": "^10.4.0",
     "dotenv": "^17.2.3",
     "eslint": "^9.16.0",
@@ -35,6 +37,7 @@
     "husky": "^9.1.0",
     "lint-staged": "^15.2.0",
     "msw": "^2.6.0",
+    "orval": "^7.13.2",
     "postcss": "^8.4.0",
     "prettier": "^3.4.0",
     "tailwindcss": "^3.4.0",
@@ -66,9 +69,11 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@scure/bip32": "^1.6.0",
     "@scure/bip39": "^1.5.0",
+    "@tanstack/react-query": "^5.90.19",
     "@tanstack/react-virtual": "^3.13.13",
     "apollo3-cache-persist": "^0.15.0",
     "argon2-browser": "^1.18.0",
+    "axios": "^1.13.2",
     "bignumber.js": "^9.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
