@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import {
   HashRouter,
   Routes,
@@ -10,11 +10,6 @@ import {
 } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useSidePanelMode } from '@/hooks/use-side-panel-mode';
-import PlaygroundPage from './Playground';
-import WalletUnlockPage from '@/pages/wallet-unlock';
-import { ImportWalletPage } from '@/pages/onboarding/import-wallet';
-import { CreateWalletPage } from '@/pages/onboarding/create-wallet';
-import { VerifyMnemonicPage } from '@/pages/onboarding/verify-mnemonic';
 import { Toaster } from '@/components/ui/toaster';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { ApolloProvider } from '@apollo/client/react';
@@ -27,16 +22,59 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Dock from '@/components/ui/dock';
 import { Home, Settings, HeartHandshake } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { WelcomePage } from '@/pages/Welcome';
-import DashboardPage from '@/pages/Dashboard';
-import SendPage from '@/pages/send';
-import SettingsPage from '@/pages/settings';
 import { BackgroundMesh } from '@/components/ui/background-mesh';
+import { WelcomePage } from '@/pages/Welcome';
+import WalletUnlockPage from '@/pages/wallet-unlock';
+
+// Lazy load pages
+const PlaygroundPage = lazy(() => import('./Playground'));
+const ImportWalletPage = lazy(() =>
+  import('@/pages/onboarding/import-wallet').then((module) => ({
+    default: module.ImportWalletPage,
+  })),
+);
+const CreateWalletPage = lazy(() =>
+  import('@/pages/onboarding/create-wallet').then((module) => ({
+    default: module.CreateWalletPage,
+  })),
+);
+const VerifyMnemonicPage = lazy(() =>
+  import('@/pages/onboarding/verify-mnemonic').then((module) => ({
+    default: module.VerifyMnemonicPage,
+  })),
+);
+const DashboardPage = lazy(() => import('@/pages/Dashboard'));
+const SendPage = lazy(() => import('@/pages/Send'));
+const SettingsPage = lazy(() => import('@/pages/Settings'));
 
 const queryClient = new QueryClient();
 
 // Configuration: List of routes (pathname) that should NOT have transition animations
 const NO_ANIMATION_ROUTES: string[] = [];
+
+const PageLoader = () => (
+  <div className="flex flex-col items-center justify-center pt-32 space-y-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.2 }}
+      className="flex flex-col items-center"
+    >
+      <div className="h-1 w-32 bg-secondary overflow-hidden rounded-full">
+        <motion.div
+          className="h-full bg-primary origin-left"
+          initial={{ x: '-100%' }}
+          animate={{ x: '100%' }}
+          transition={{
+            repeat: Infinity,
+            duration: 1.5,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+    </motion.div>
+  </div>
+);
 
 const Layout = () => {
   const { uiMode } = useSidePanelMode();
@@ -87,7 +125,12 @@ const Layout = () => {
     >
       <BackgroundMesh />
 
-      <main className="flex-1 overflow-auto relative px-4 pb-24">
+      <main
+        className={cn(
+          'flex-1 overflow-auto relative px-4',
+          activeLabel ? 'pb-24' : 'pb-0',
+        )}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -95,9 +138,9 @@ const Layout = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={isAnimated ? { opacity: 0, y: 5 } : { opacity: 0, y: 0 }}
             transition={{ duration: isAnimated ? 0.2 : 0, ease: 'easeInOut' }}
-            className="h-full"
+            className="min-h-full flex flex-col w-full max-w-3xl mx-auto"
           >
-            {element}
+            <Suspense fallback={<PageLoader />}>{element}</Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
@@ -158,7 +201,10 @@ const App: React.FC = () => {
               <Route path="/welcome" element={<WelcomePage />} />
               <Route path="/wallet-unlock" element={<WalletUnlockPage />} />
               <Route path="/onboarding/create" element={<CreateWalletPage />} />
-              <Route path="/onboarding/verify" element={<VerifyMnemonicPage />} />
+              <Route
+                path="/onboarding/verify"
+                element={<VerifyMnemonicPage />}
+              />
               <Route path="/onboarding/import" element={<ImportWalletPage />} />
               <Route
                 path="/dashboard"
