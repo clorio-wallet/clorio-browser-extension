@@ -41,8 +41,8 @@ export function BalanceDisplay({
   }, [loading]);
 
   const showSkeleton = loading && isFirstLoad;
-  const numericBalance = typeof balance === 'string' ? parseFloat(balance) : balance;
-  const numericFiatValue = typeof fiatValue === 'string' ? parseFloat(fiatValue) : fiatValue;
+  const numericBalance = typeof balance === 'string' ? parseFloat(balance.replace(/,/g, '')) : balance;
+  const numericFiatValue = typeof fiatValue === 'string' ? parseFloat(fiatValue.replace(/[^0-9.-]+/g, '')) : fiatValue;
 
   const fiatSymbol =
     fiatCurrency === "USD" ? "$" : fiatCurrency === "EUR" ? "€" : fiatCurrency;

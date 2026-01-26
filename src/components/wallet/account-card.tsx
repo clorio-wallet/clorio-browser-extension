@@ -83,7 +83,7 @@ export function AccountCard({
             {/* Account Info */}
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="font-medium truncate">{account.name}</h3>
+                <h3 className="font-bold text-lg truncate">{account.name}</h3>
                 {isActive && (
                   <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">
                     {t('settings.account_card.active')}
@@ -98,6 +98,8 @@ export function AccountCard({
                   showExplorer={!!explorerUrl}
                   explorerUrl={explorerUrl}
                   className="text-muted-foreground"
+                  truncateStart={10}
+                  truncateEnd={10}
                 />
                 <button
                   onClick={handleCopy}

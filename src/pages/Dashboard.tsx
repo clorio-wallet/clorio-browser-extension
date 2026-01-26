@@ -2,22 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccountCard } from '@/components/wallet/account-card';
 import { Button } from '@/components/ui/button';
-import { Lock, BookPlus, RefreshCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSessionStore } from '@/stores/session-store';
-import { useWalletStore } from '@/stores/wallet-store';
-import { useSettingsStore } from '@/stores/settings-store';
-import { DEFAULT_NETWORKS } from '@/lib/networks';
-import { useGetAccount, useGetMinaInfo } from '@/api/mina/mina';
-import { useGetTicker } from '@/api/ticker/ticker';
-import { useGetHealth } from '@/api/health/health';
 import { useToast } from '@/hooks/use-toast';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,73 +16,34 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { ViewPrivateKeySheet } from '@/components/wallet/view-private-key-sheet';
-import { useMinimumLoading } from '@/hooks/use-minimum-loading';
-import { NetworkBadge } from '@/components/wallet';
 import { LoopingLottie } from '@/components/ui/looping-lottie';
 import ufoAnimation from '../animations/ufo.json';
+import { useDashboardData } from '@/hooks/use-dashboard-data';
+import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 
 const DashboardPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { logout, resetWallet } = useSessionStore();
-  const { publicKey } = useWalletStore();
-  const { networkId, balancePollInterval } = useSettingsStore();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isViewKeyDialogOpen, setIsViewKeyDialogOpen] = useState(false);
 
-  const network = DEFAULT_NETWORKS[networkId] || DEFAULT_NETWORKS.mainnet;
-  const pollIntervalMs =
-    balancePollInterval > 0 ? balancePollInterval * 60 * 1000 : 0;
+  const {
+    publicKey,
+    network,
+    account,
+    displayLoading,
+    healthData,
+    minaInfo,
+    refetchAccount,
+  } = useDashboardData();
 
   useEffect(() => {
     if (!publicKey) {
       navigate('/welcome');
     }
   }, [publicKey, navigate]);
-
-  // REST API hooks
-  const { data: accountData, isLoading: isAccountLoading, refetch: refetchAccount } = useGetAccount(
-    publicKey || '',
-    {
-      query: {
-        enabled: !!publicKey,
-        refetchInterval: pollIntervalMs > 0 ? pollIntervalMs : false,
-      }
-    }
-  );
-
-  const { data: tickerData } = useGetTicker({
-    query: {
-      refetchInterval: 60000, // Update ticker every minute
-    }
-  });
-
-  const { data: minaInfo } = useGetMinaInfo({
-    query: {
-      refetchInterval: 60000,
-    }
-  });
-
-  const { data: healthData } = useGetHealth({
-    query: {
-      refetchInterval: 300000,
-    }
-  });
-
-  const displayLoading = useMinimumLoading(isAccountLoading, 1000);
-
-  const balanceRaw = accountData?.balance || 0;
-  const balanceMina = Number(balanceRaw) / 1e9;
-  const tickerPrice = Number(tickerData?.mina?.USDMINA || 0);
-  const fiatValue = (balanceMina * tickerPrice).toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  const handleRefresh = () => {
-    refetchAccount();
-  };
 
   const handleLogout = () => {
     logout();
@@ -115,112 +63,33 @@ const DashboardPage: React.FC = () => {
     navigate('/welcome');
   };
 
-  const handleViewPrivateKey = () => {
-    setIsViewKeyDialogOpen(true);
-  };
-
   return (
     <div className="space-y-6 py-2">
-      <header className="flex justify-between items-center">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div >
-                <NetworkBadge network={network.name} />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="text-xs space-y-1">
-                <p>Status: <span className={healthData?.status === 'ok' ? 'text-green-500' : 'text-red-500'}>{healthData?.status || 'Checking...'}</span></p>
-                <p>Block Height: {minaInfo?.height || '-'}</p>
-                <p>Epoch: {minaInfo?.epoch || '-'}</p>
-                <p>Slot: {minaInfo?.slot || '-'}</p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleRefresh}
-            title={t('dashboard.refresh_balance')}
-            disabled={displayLoading}
-          >
-            <RefreshCcw
-              className={`h-5 w-5 ${displayLoading ? 'animate-spin' : ''}`}
-            />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/playground')}
-          >
-            <BookPlus className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            title={t('dashboard.logout')}
-          >
-            <Lock className="h-5 w-5" />
-          </Button>
-
-          <AlertDialog
-            open={isDeleteDialogOpen}
-            onOpenChange={setIsDeleteDialogOpen}
-          >
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{t('dashboard.confirm_delete_title')}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t('dashboard.confirm_delete_desc')}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeleteWallet}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  {t('dashboard.delete_wallet')}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-
-          <ViewPrivateKeySheet
-            open={isViewKeyDialogOpen}
-            onOpenChange={setIsViewKeyDialogOpen}
-          />
-        </div>
-      </header>
+      <DashboardHeader
+        networkName={network.name}
+        healthStatus={healthData?.status}
+        blockHeight={minaInfo?.height}
+        epoch={minaInfo?.epoch}
+        slot={minaInfo?.slot}
+        displayLoading={displayLoading}
+        onRefresh={refetchAccount}
+        onLogout={handleLogout}
+      />
 
       <div className="space-y-4">
         <AccountCard
-          account={{
-            name: 'Mina Wallet', // TODO: Add custom names
-            address: publicKey || '',
-            balance: balanceMina.toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            }),
-            symbol: 'MINA',
-            fiatValue: tickerPrice > 0 ? `$${fiatValue}` : undefined,
-          }}
+          account={account}
           isLoading={displayLoading}
           explorerUrl={`${network.explorerUrl}/account/${publicKey}`}
           onSelect={() => {}}
           onRename={() => {
-            // TODO: Implement rename
             toast({
               title: 'Not Implemented',
               description: 'Renaming accounts will be available soon.',
             });
           }}
           onDelete={() => setIsDeleteDialogOpen(true)}
-          onViewPrivateKey={handleViewPrivateKey}
+          onViewPrivateKey={() => setIsViewKeyDialogOpen(true)}
         />
         <Button
           className="w-full"
@@ -232,7 +101,7 @@ const DashboardPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center text-muted-foreground text-sm py-8 space-y-4">
-        <div className="w-[200px] h-[200px]">
+        <div className="sm:max-w-[200px] sm:max-h-[200px] max-w-[150px]">
           <LoopingLottie
             animationData={ufoAnimation}
             loopLastSeconds={2}
@@ -241,6 +110,36 @@ const DashboardPage: React.FC = () => {
         </div>
         <p>{t('dashboard.no_transactions')}</p>
       </div>
+
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('dashboard.confirm_delete_title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('dashboard.confirm_delete_desc')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteWallet}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('dashboard.delete_wallet')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <ViewPrivateKeySheet
+        open={isViewKeyDialogOpen}
+        onOpenChange={setIsViewKeyDialogOpen}
+      />
     </div>
   );
 };

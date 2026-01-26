@@ -106,11 +106,11 @@ const WalletUnlockPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-[100vh]">
-      <div className="w-[200px] h-[200px]">
+    <div className="flex-1 flex flex-col items-center justify-center w-full overflow-hidden p-4">
+      <div className="w-[30vh] h-[30vh] max-w-[200px] max-h-[200px] min-w-[120px] min-h-[120px] shrink-0 mb-6">
         <LoopingLottie animationData={lockAnimation} loopLastSeconds={3} />
       </div>
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-sm shrink-0 shadow-lg">
         <CardHeader>
           <CardTitle>{t('wallet_unlock.title')}</CardTitle>
           <CardDescription>

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 export const BackgroundMesh = ({ className }: { className?: string }) => {
   return (
-    <div className={cn("absolute inset-0 overflow-hidden pointer-events-none select-none", className)}>
+    <div className={cn("fixed inset-0 overflow-hidden pointer-events-none select-none", className)}>
       <div 
         className="absolute top-[-20%] left-[-20%] w-[70%] h-[70%] rounded-full bg-primary opacity-[0.08] blur-[80px] animate-pulse" 
         style={{ animationDuration: '8s' }}
